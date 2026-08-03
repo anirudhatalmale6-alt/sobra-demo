@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sobra — Marketplace de stock excedente</title>
+<meta name="description" content="Sobra ajuda empresas a vender stock excedente, fim de estação e produtos de saldo, enquanto os compradores poupam. Menos desperdício, mais poupança.">
+<style>
+  :root{
+    --green:#1f8a5b; --green-dark:#166945; --green-light:#e8f5ee;
+    --ink:#12261d; --muted:#5f6f67; --bg:#f6f9f7; --card:#ffffff;
+    --amber:#f2a33c; --line:#e2ebe6; --radius:16px;
+    --shadow:0 6px 24px rgba(18,38,29,.07);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',system-ui,-apple-system,Roboto,sans-serif;color:var(--ink);background:var(--bg);line-height:1.55;-webkit-font-smoothing:antialiased}
+  a{text-decoration:none;color:inherit}
+  img{max-width:100%;display:block}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+
+  /* Header */
+  header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .nav{display:flex;align-items:center;gap:20px;height:66px}
+  .logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:1.32rem;letter-spacing:-.5px}
+  .logo .mark{width:30px;height:30px;background:var(--green);border-radius:9px;display:grid;place-items:center;color:#fff;font-size:1rem}
+  .logo b{color:var(--green)}
+  .nav-links{display:flex;gap:22px;margin-left:14px;font-size:.94rem;color:var(--muted)}
+  .nav-links a:hover{color:var(--green)}
+  .nav-cta{margin-left:auto;display:flex;gap:10px;align-items:center}
+  .btn{border:0;cursor:pointer;font:inherit;font-weight:600;padding:10px 18px;border-radius:10px;font-size:.92rem;transition:.15s}
+  .btn-ghost{background:transparent;color:var(--ink)}
+  .btn-ghost:hover{color:var(--green)}
+  .btn-primary{background:var(--green);color:#fff}
+  .btn-primary:hover{background:var(--green-dark)}
+  .nav-links,.nav-cta .btn-ghost{display:none}
+  @media(min-width:860px){.nav-links{display:flex}.nav-cta .btn-ghost{display:inline-block}}
+
+  /* Hero */
+  .hero{padding:56px 0 30px;background:linear-gradient(180deg,var(--green-light),var(--bg))}
+  .hero h1{font-size:2.5rem;line-height:1.1;letter-spacing:-1px;max-width:16ch}
+  .hero h1 span{color:var(--green)}
+  .hero p{margin-top:16px;font-size:1.12rem;color:var(--muted);max-width:52ch}
+  .pill{display:inline-flex;align-items:center;gap:7px;background:#fff;border:1px solid var(--line);color:var(--green-dark);padding:6px 13px;border-radius:999px;font-size:.82rem;font-weight:600;margin-bottom:18px}
+  .search{margin-top:26px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:8px;display:flex;gap:8px;flex-wrap:wrap;max-width:720px}
+  .search input,.search select{border:0;font:inherit;padding:12px 14px;border-radius:9px;background:var(--bg);flex:1;min-width:120px;color:var(--ink)}
+  .search input{flex:2;min-width:180px}
+  .search .btn-primary{flex:0 0 auto}
+  @media(max-width:560px){.hero h1{font-size:2rem}}
+
+  .stats{display:flex;gap:34px;margin-top:30px;flex-wrap:wrap}
+  .stats div b{display:block;font-size:1.6rem;color:var(--green)}
+  .stats div span{font-size:.85rem;color:var(--muted)}
+
+  /* Categories */
+  section{padding:44px 0}
+  .sec-head{display:flex;align-items:end;justify-content:space-between;margin-bottom:22px;gap:14px;flex-wrap:wrap}
+  .sec-head h2{font-size:1.5rem;letter-spacing:-.5px}
+  .sec-head p{color:var(--muted);font-size:.94rem}
+  .cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+  .cat{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;text-align:center;transition:.15s;cursor:pointer}
+  .cat:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--green)}
+  .cat .ico{font-size:1.7rem}
+  .cat b{display:block;margin-top:8px;font-size:.95rem}
+  .cat span{font-size:.78rem;color:var(--muted)}
+
+  /* Filters + grid */
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+  .chip{border:1px solid var(--line);background:#fff;color:var(--muted);padding:8px 15px;border-radius:999px;font-size:.86rem;cursor:pointer;font-weight:600;transition:.15s}
+  .chip:hover{border-color:var(--green);color:var(--green)}
+  .chip.on{background:var(--green);color:#fff;border-color:var(--green)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;transition:.18s;display:flex;flex-direction:column}
+  .card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+  .thumb{height:158px;position:relative;display:grid;place-items:center;font-size:3rem}
+  .badge{position:absolute;top:10px;left:10px;background:var(--amber);color:#3a2600;font-size:.72rem;font-weight:700;padding:4px 9px;border-radius:7px}
+  .badge.new{background:var(--green);color:#fff}
+  .card-body{padding:14px;display:flex;flex-direction:column;gap:6px;flex:1}
+  .seller{font-size:.76rem;color:var(--muted);display:flex;align-items:center;gap:5px}
+  .seller .dot{width:16px;height:16px;border-radius:50%;background:var(--green-light);display:grid;place-items:center;font-size:.6rem;color:var(--green-dark);font-weight:700}
+  .card h3{font-size:1rem;font-weight:600;letter-spacing:-.2px}
+  .price{margin-top:auto;display:flex;align-items:baseline;gap:8px}
+  .price b{font-size:1.25rem;color:var(--green)}
+  .price s{color:var(--muted);font-size:.85rem}
+  .price .off{font-size:.72rem;background:var(--green-light);color:var(--green-dark);padding:2px 7px;border-radius:6px;font-weight:700}
+  .card .contact{margin-top:10px;text-align:center;background:var(--green-light);color:var(--green-dark);padding:9px;border-radius:9px;font-size:.85rem;font-weight:600}
+  .card .contact:hover{background:var(--green);color:#fff}
+
+  /* How it works */
+  .how{background:var(--green-dark);color:#fff}
+  .how h2{color:#fff}
+  .how .sec-head p{color:#c9e4d6}
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
+  .step{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:var(--radius);padding:22px}
+  .step .n{width:34px;height:34px;border-radius:9px;background:var(--amber);color:#3a2600;display:grid;place-items:center;font-weight:800;margin-bottom:12px}
+  .step h3{font-size:1.08rem;margin-bottom:6px}
+  .step p{color:#c9e4d6;font-size:.9rem}
+
+  /* CTA business */
+  .cta-band{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:36px;display:flex;gap:26px;align-items:center;justify-content:space-between;flex-wrap:wrap;box-shadow:var(--shadow)}
+  .cta-band h2{font-size:1.6rem;letter-spacing:-.5px}
+  .cta-band p{color:var(--muted);margin-top:8px;max-width:46ch}
+
+  footer{background:#0f1d16;color:#a9bcb2;padding:40px 0 26px;margin-top:20px}
+  .foot-grid{display:grid;grid-template-columns:1.5fr repeat(3,1fr);gap:26px}
+  @media(max-width:720px){.foot-grid{grid-template-columns:1fr 1fr}}
+  footer h4{color:#fff;font-size:.95rem;margin-bottom:12px}
+  footer a{display:block;color:#a9bcb2;font-size:.88rem;padding:4px 0}
+  footer a:hover{color:#fff}
+  .foot-logo{color:#fff;font-weight:800;font-size:1.2rem;margin-bottom:10px}
+  .foot-bot{border-top:1px solid rgba(255,255,255,.1);margin-top:26px;padding-top:18px;font-size:.8rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+  .demo-tag{position:fixed;bottom:14px;right:14px;background:var(--ink);color:#fff;font-size:.75rem;padding:8px 14px;border-radius:999px;opacity:.9;z-index:80}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="#"><span class="mark">♺</span> <span>So<b>bra</b></span></a>
+    <nav class="nav-links">
+      <a href="#produtos">Produtos</a>
+      <a href="#categorias">Categorias</a>
+      <a href="#empresas">Empresas</a>
+      <a href="#como">Como funciona</a>
+    </nav>
+    <div class="nav-cta">
+      <button class="btn btn-ghost">Entrar</button>
+      <button class="btn btn-primary">Vender stock</button>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="wrap">
+    <span class="pill">♻ Menos desperdício · Mais poupança</span>
+    <h1>Stock a mais de umas, <span>poupança</span> a mais de outras.</h1>
+    <p>A Sobra liga empresas com excedente de stock, fim de estação e saldos a compradores que procuram os melhores preços. Sem intermediários complicados.</p>
+
+    <div class="search">
+      <input id="q" type="text" placeholder="O que procura? Ex: ténis, eletrodomésticos, mobiliário…">
+      <select id="catSel">
+        <option value="">Todas as categorias</option>
+        <option>Moda</option><option>Casa</option><option>Tecnologia</option>
+        <option>Alimentar</option><option>Beleza</option><option>Desporto</option>
+      </select>
+      <button class="btn btn-primary" onclick="applySearch()">Procurar</button>
+    </div>
+
+    <div class="stats">
+      <div><b>1.240+</b><span>produtos com desconto</span></div>
+      <div><b>310</b><span>empresas a reduzir stock</span></div>
+      <div><b>-58%</b><span>poupança média</span></div>
+      <div><b>0€</b><span>custo para começar</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<section id="categorias">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><h2>Explorar por categoria</h2><p>Encontre oportunidades em todos os setores.</p></div>
+    </div>
+    <div class="cats">
+      <div class="cat" onclick="filterCat('Moda')"><div class="ico">👗</div><b>Moda</b><span>318 artigos</span></div>
+      <div class="cat" onclick="filterCat('Casa')"><div class="ico">🛋️</div><b>Casa</b><span>204 artigos</span></div>
+      <div class="cat" onclick="filterCat('Tecnologia')"><div class="ico">💻</div><b>Tecnologia</b><span>176 artigos</span></div>
+      <div class="cat" onclick="filterCat('Alimentar')"><div class="ico">🥫</div><b>Alimentar</b><span>142 artigos</span></div>
+      <div class="cat" onclick="filterCat('Beleza')"><div class="ico">💄</div><b>Beleza</b><span>98 artigos</span></div>
+      <div class="cat" onclick="filterCat('Desporto')"><div class="ico">⚽</div><b>Desporto</b><span>127 artigos</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section id="produtos" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><h2>Oportunidades em destaque</h2><p>Stock real de empresas portuguesas a precisar de escoar.</p></div>
+    </div>
+    <div class="toolbar" id="chips">
+      <div class="chip on" data-f="all" onclick="filterCat('all')">Todos</div>
+      <div class="chip" data-f="Excedente" onclick="filterTag('Excedente')">Excedente</div>
+      <div class="chip" data-f="Fim de estação" onclick="filterTag('Fim de estação')">Fim de estação</div>
+      <div class="chip" data-f="Devolução nova" onclick="filterTag('Devolução nova')">Devolução nova</div>
+      <div class="chip" data-f="Saldo" onclick="filterTag('Saldo')">Saldo</div>
+    </div>
+    <div class="grid" id="grid"></div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="como">
+  <div class="wrap">
+    <div class="sec-head"><div><h2>Como funciona</h2><p>Simples para quem vende e para quem compra.</p></div></div>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><h3>A empresa publica</h3><p>Cria o perfil e lista o stock excedente em minutos, com fotos e preço.</p></div>
+      <div class="step"><div class="n">2</div><h3>O comprador procura</h3><p>Pesquisa e filtra sem precisar de conta. Encontra o que quer ao melhor preço.</p></div>
+      <div class="step"><div class="n">3</div><h3>Contacto direto</h3><p>Envia um pedido à empresa através da plataforma. Sem comissões complicadas.</p></div>
+      <div class="step"><div class="n">4</div><h3>Menos desperdício</h3><p>O stock ganha nova vida, a empresa recupera valor e o planeta agradece.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- BUSINESS CTA -->
+<section id="empresas">
+  <div class="wrap">
+    <div class="cta-band">
+      <div>
+        <h2>Tem stock parado no armazém?</h2>
+        <p>Transforme excedente e devoluções em receita. Criar conta de empresa é gratuito e leva 2 minutos.</p>
+      </div>
+      <button class="btn btn-primary" style="padding:14px 26px;font-size:1rem">Criar conta de empresa →</button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-logo">♺ Sobra</div>
+        <p style="font-size:.88rem;max-width:34ch">O marketplace que dá uma segunda oportunidade ao stock e poupa dinheiro a quem compra.</p>
+      </div>
+      <div><h4>Plataforma</h4><a href="#">Explorar produtos</a><a href="#">Categorias</a><a href="#">Empresas</a></div>
+      <div><h4>Empresas</h4><a href="#">Vender stock</a><a href="#">Como funciona</a><a href="#">Preços</a></div>
+      <div><h4>Sobre</h4><a href="#">A nossa missão</a><a href="#">Contacto</a><a href="#">Termos</a></div>
+    </div>
+    <div class="foot-bot"><span>© 2026 Sobra · Feito em Portugal 🇵🇹</span><span>Menos desperdício, mais poupança.</span></div>
+  </div>
+</footer>
+
+<div class="demo-tag">🔎 Demonstração · protótipo</div>
+
+<script>
+const products=[
+  {t:"Ténis running (coleção anterior)",cat:"Desporto",tag:"Fim de estação",seller:"NorteSport",price:39,was:89,ico:"👟"},
+  {t:"Casaco de inverno acolchoado",cat:"Moda",tag:"Fim de estação",seller:"ModaLisboa",price:29,was:79,ico:"🧥"},
+  {t:"Máquina de café (devolução nova)",cat:"Tecnologia",tag:"Devolução nova",seller:"TecPorto",price:55,was:129,ico:"☕"},
+  {t:"Conjunto de panelas inox",cat:"Casa",tag:"Excedente",seller:"CasaBela",price:34,was:75,ico:"🍳"},
+  {t:"Azeite virgem extra (lote)",cat:"Alimentar",tag:"Excedente",seller:"Quinta do Vale",price:19,was:32,ico:"🫒"},
+  {t:"Sérum facial (fim de validade longa)",cat:"Beleza",tag:"Saldo",seller:"DermaCare",price:12,was:29,ico:"🧴"},
+  {t:"Auscultadores sem fios",cat:"Tecnologia",tag:"Devolução nova",seller:"TecPorto",price:24,was:59,ico:"🎧"},
+  {t:"Vestido de verão (excedente)",cat:"Moda",tag:"Excedente",seller:"ModaLisboa",price:15,was:45,ico:"👗"},
+  {t:"Candeeiro de pé nórdico",cat:"Casa",tag:"Saldo",seller:"CasaBela",price:28,was:65,ico:"💡"},
+  {t:"Bola de futebol profissional",cat:"Desporto",tag:"Excedente",seller:"NorteSport",price:16,was:39,ico:"⚽"},
+  {t:"Barras proteicas (caixa 24)",cat:"Alimentar",tag:"Saldo",seller:"FitFood",price:18,was:36,ico:"🍫"},
+  {t:"Tablet 10\" (recondicionado novo)",cat:"Tecnologia",tag:"Devolução nova",seller:"TecPorto",price:99,was:199,ico:"📱"},
+];
+let curCat="all", curTag=null, curQ="";
+function pct(p,w){return Math.round((1-p/w)*100)}
+function render(){
+  const g=document.getElementById('grid');
+  const list=products.filter(p=>{
+    const okCat=curCat==="all"||p.cat===curCat;
+    const okTag=!curTag||p.tag===curTag;
+    const okQ=!curQ||p.t.toLowerCase().includes(curQ)||p.cat.toLowerCase().includes(curQ)||p.seller.toLowerCase().includes(curQ);
+    return okCat&&okTag&&okQ;
+  });
+  g.innerHTML=list.map(p=>`
+    <div class="card">
+      <div class="thumb" style="background:linear-gradient(135deg,#e8f5ee,#f6f9f7)">
+        <span class="badge ${p.tag==='Devolução nova'?'new':''}">${p.tag}</span>${p.ico}
+      </div>
+      <div class="card-body">
+        <div class="seller"><span class="dot">${p.seller[0]}</span>${p.seller}</div>
+        <h3>${p.t}</h3>
+        <div class="price"><b>${p.price}€</b><s>${p.was}€</s><span class="off">-${pct(p.price,p.was)}%</span></div>
+        <div class="contact">✉ Contactar vendedor</div>
+      </div>
+    </div>`).join('') || '<p style="color:var(--muted)">Sem resultados para esta pesquisa.</p>';
+}
+function filterCat(c){curCat=c;curTag=null;curQ="";document.getElementById('q').value="";
+  document.querySelectorAll('#chips .chip').forEach(x=>x.classList.toggle('on',x.dataset.f==='all'));render();
+  document.getElementById('produtos').scrollIntoView({behavior:'smooth'});}
+function filterTag(t){curTag=curTag===t?null:t;curCat="all";
+  document.querySelectorAll('#chips .chip').forEach(x=>x.classList.toggle('on',(curTag===null&&x.dataset.f==='all')||x.dataset.f===t));render();}
+function applySearch(){curQ=document.getElementById('q').value.toLowerCase().trim();
+  const c=document.getElementById('catSel').value;curCat=c||"all";curTag=null;
+  document.getElementById('produtos').scrollIntoView({behavior:'smooth'});render();}
+document.getElementById('q').addEventListener('keydown',e=>{if(e.key==='Enter')applySearch()});
+render();
+</script>
+</body>
+</html>
